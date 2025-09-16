@@ -2,50 +2,53 @@
 #include<stdlib.h>
 #include<unistd.h>
 #include<sys/types.h>
-#include<string.h>
 #include<sys/wait.h>
+#include<string.h>
 #define MSGSIZE 100
 int main(){
   int fd[2];
 char msg[MSGSIZE];
 pid_t pid;
 if(pipe(fd)==-1){
-perror("pipe");
+perror("pipe error");
 exit(EXIT_FAILURE);
 }
-pid = fork();
+pid=fork();
 if(pid<0){
-perror("fork");
+perror("fork error");
 exit(EXIT_FAILURE);
 }
-  if(pid>0){
+if(pid>0){
 close(fd[0]);
-    printf("enter a message to send :");
-    fgets(msg,MSGSIZE,stdin);
-    size_t len=strlen(msg);
-    if(len>0 && msg[len-1]=='\n'){
-        msg[len-1]='\0';
-        len--;
-    }
+printf("enter a message to send : ");
+fgets(msg,MSGSIZE,stdin);
+size_t len=strlen(msg);
+if(len>0 && msg[len-1]=='\n'){
+msg[len-1]='\0';
+len--;
+}
 size_t bytes_written=write(fd[1],msg,len+1);
-if(bytes_written==-1);{
-    perror("write");
+if(bytes_written==-1){
+perror("write error");
 exit(EXIT_FAILURE);
 }
-printf("parent wrote %zd bytes to pipe \n",bytes_written);
+printf("parent wrote %zd bytes to pipe \n ",bytes_written);
 close(fd[1]);
 wait(NULL);
 }else{
-    close(fd[1]);
-    size_t bytes_read=read(fd[0],msg,MSGSIZE);
-    if(bytes_read==-1){
-        perror("read");
-        exit(EXIT_FAILURE);
-    }
-    printf("child received message : %s\n",msg);
-    printf("child read %zd bytes from pipe \n",bytes_read);
-    close(fd[0]);
-    exit(EXIT_SUCCESS);
+close(fd[1]);
+size_t bytes_read=read(fd[0],msg,MSGSIZE);
+if(bytes_read==-1){
+perror("read error");
+exit(EXIT_FAILURE);
 }
-    return 0;
+printf("child received message : %s\n",msg);
+printf("child read %zd bytes from pipe\n",bytes_read);
+close(fd[0]);
+exit(EXIT_FAILURE);
 }
+return 0;
+}
+
+
+  
