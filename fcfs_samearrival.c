@@ -10,6 +10,17 @@ void findturnaroundtime(int processes[],int n,int bt[],int wt[],int tat[]){
         tat[i]=bt[i]+wt[i];
     }
 }
+void printganttchart(int n,int processes[],int bt[],int wt[]){
+    printf("\nGantt Chart:\n");
+    for(int i=0;i<n;i++){
+        printf("| P%d ",processes[i]);
+    }
+    printf("|\n0");
+    for(int i=0;i<n;i++){
+        printf("    %d",wt[i]+bt[i]);
+    }
+    printf("\n");
+}
 void findavgtime(int processes[],int n,int bt[]){
     int wt[n],tat[n],total_wt=0,total_tat=0;
     findwaitingtime(processes,n,bt,wt);
@@ -28,7 +39,9 @@ void findavgtime(int processes[],int n,int bt[]){
     printf("average waiting time =%f",s);
     printf("\n");
     printf("average turn around time=%f",t);
+    printganttchart(n, processes, bt, wt);
 }
+
 int main(){
     int n;
     int processes[n];
@@ -37,9 +50,12 @@ int main(){
     int bt[n],wt[n],tat[n];
     printf("enter burst time for each process\n");
     for(int i=0;i<n;i++){
+        processes[i] = i + 1;   
         printf("process %d ", (i+1) );
         scanf("%d",&bt[i]);
     }
     findavgtime(processes, n,  bt);
     return 0;
 }
+
+  
